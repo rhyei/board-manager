@@ -1,0 +1,48 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = "native"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  passwordHash String
+  createdAt    DateTime @default(now()) @db.Timestamptz(2)
+  Token        Token?
+}
+
+model BoardInspection {
+  id         Int      @id @default(autoincrement())
+  date       DateTime @default(now()) @db.Timestamptz(2)
+  week       Int
+  inspector  String   @default("Undefined")
+  product    String   @default("Undefined")
+  defectType String   @default("Undefined")
+  defect     String   @default("Undefined")
+  note       String?
+  worker     Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(2)
+}
+
+model BoardInventory {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now()) @db.Timestamptz(2)
+  week      Int
+  quantity  Int
+  inspector String   @default("Undefined")
+  product   String   @default("Undefined")
+  worker    Int
+  createdAt DateTime @default(now()) @db.Timestamptz(2)
+}
+
+model Token {
+  id           Int    @id @default(autoincrement())
+  refreshToken String @unique
+  userId       Int    @unique
+  User         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
